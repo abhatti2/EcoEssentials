@@ -1,22 +1,16 @@
-<div id="<%= dom_id product %>">
-  <p>
-    <strong>Name:</strong>
-    <%= product.name %>
-  </p>
+<div id="<%= dom_id product %>" class="card mb-4">
+  <div class="card-body">
+    <h5 class="card-title"><%= product.name %></h5>
+    <p class="card-text text-muted"><%= truncate(product.description, length: 100) %></p>
 
-  <p>
-    <strong>Description:</strong>
-    <%= product.description %>
-  </p>
+    <p class="card-text">
+      <strong>Price:</strong> $<%= product.current_price %>
+    </p>
 
-  <p>
-    <strong>Current price:</strong>
-    <%= product.current_price %>
-  </p>
+    <p class="card-text">
+      <strong>Stock:</strong> <%= product.stock_quantity %>
+    </p>
 
-  <p>
-    <strong>Stock quantity:</strong>
-    <%= product.stock_quantity %>
-  </p>
-
+    <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+  </div>
 </div>

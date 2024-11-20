@@ -4,8 +4,8 @@ Rails.application.routes.draw do
   get 'about', to: 'home#about'
   get 'contact', to: 'home#contact'
 
-  # Product display routes
-  resources :products, only: [:index, :show]
+  # Product display and management routes
+  resources :products, only: [:index, :show, :new, :create, :edit, :update, :destroy]
 
   # Cart routes
   resource :cart, only: [:show] do

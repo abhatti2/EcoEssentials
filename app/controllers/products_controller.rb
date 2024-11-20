@@ -1,9 +1,10 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show edit update destroy ]
+  before_action :set_product, only: %i[show edit update destroy]
 
   # GET /products or /products.json
   def index
-    @products = Product.all
+    # Apply search and paginate the results
+    @products = Product.search(params[:query]).page(params[:page]).per(10)
   end
 
   # GET /products/1 or /products/1.json
@@ -49,22 +50,23 @@ class ProductsController < ApplicationController
 
   # DELETE /products/1 or /products/1.json
   def destroy
-    @product.destroy!
+    @product.destroy
 
     respond_to do |format|
-      format.html { redirect_to products_path, status: :see_other, notice: "Product was successfully destroyed." }
+      format.html { redirect_to products_path, notice: "Product was successfully destroyed.", status: :see_other }
       format.json { head :no_content }
     end
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_product
-      @product = Product.find(params.expect(:id))
-    end
 
-    # Only allow a list of trusted parameters through.
-    def product_params
-      params.expect(product: [ :name, :description, :current_price, :stock_quantity ])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_product
+    @product = Product.find(params[:id]) # Fixed typo: params.expect(:id) -> params[:id]
+  end
+
+  # Only allow a list of trusted parameters through.
+  def product_params
+    params.require(:product).permit(:name, :description, :current_price, :stock_quantity)
+  end
 end
