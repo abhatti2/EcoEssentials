@@ -1,14 +1,14 @@
 Rails.application.routes.draw do
   # Public routes
-  root 'home#index'
-  get 'about', to: 'home#about'
-  get 'contact', to: 'home#contact'
+  root "home#index"
+  get "about", to: "home#about"
+  get "contact", to: "home#contact"
 
-  # Product display and management routes
-  resources :products, only: [:index, :show, :new, :create, :edit, :update, :destroy]
+  # Public Product display routes
+  resources :products, only: [ :index, :show ]
 
   # Cart routes
-  resource :cart, only: [:show] do
+  resource :cart, only: [ :show ] do
     post :add
     delete :remove
     get :checkout
@@ -19,7 +19,7 @@ Rails.application.routes.draw do
 
   namespace :admin do
     root to: "dashboard#index"
-    resources :products
+    resources :products, except: [ :show ] # Admin-specific product management (add, edit, delete)
   end
 
   # Health check route (for server monitoring)
