@@ -1,17 +1,13 @@
-# Clear existing data
-puts "Clearing old data..."
+# Clear existing products
 Product.destroy_all
 
-# Seed products
-puts "Seeding products..."
-50.times do |i|
+# Seed realistic products
+10.times do
   Product.create!(
-    name: Faker::Commerce.product_name,
-    description: Faker::Lorem.paragraph(sentence_count: 3),
+    name: Faker::Commerce.product_name, # Generates realistic product names
+    description: Faker::Lorem.sentence(word_count: 10), # More descriptive text
     current_price: Faker::Commerce.price(range: 5..100.0),
-    stock_quantity: rand(1..50)
+    stock_quantity: rand(10..50)
   )
-  puts "Created product #{i + 1}/50" if (i + 1) % 10 == 0 # Progress log every 10 products
 end
-
-puts "Seeding completed: 50 products added."
+puts "Seeded 10 realistic products."
