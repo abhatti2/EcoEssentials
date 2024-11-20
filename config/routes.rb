@@ -1,8 +1,4 @@
 Rails.application.routes.draw do
-  get "carts/show"
-  get "carts/add"
-  get "carts/remove"
-  get "carts/checkout"
   # Public routes
   root 'home#index'
   get 'about', to: 'home#about'

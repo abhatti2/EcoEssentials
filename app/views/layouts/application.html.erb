@@ -50,6 +50,18 @@
             <li class="nav-item">
               <a class="nav-link <%= "active" if current_page?(cart_path) %>" href="<%= cart_path %>">Cart</a>
             </li>
+            <% if admin_signed_in? %>
+              <li class="nav-item">
+                <a class="nav-link <%= "active" if current_page?(admin_root_path) %>" href="<%= admin_root_path %>">Admin</a>
+              </li>
+              <li class="nav-item">
+                <%= link_to "Log Out", destroy_admin_session_path, method: :delete, class: "nav-link", data: { confirm: "Are you sure you want to log out?" } %>
+              </li>
+            <% else %>
+              <li class="nav-item">
+                <%= link_to "Admin Login", new_admin_session_path, class: "nav-link" %>
+              </li>
+            <% end %>
           </ul>
         </div>
       </div>
