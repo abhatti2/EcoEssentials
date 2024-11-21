@@ -19,7 +19,11 @@
 
     <p class="card-text">
       <span class="fw-bold">Category:</span>
-      <%= @product.category.present? ? link_to(@product.category.name, admin_category_path(@product.category), class: "text-decoration-none") : "Uncategorized" %>
+      <% if @product.category.present? %>
+        <%= link_to @product.category.name, admin_category_path(@product.category), class: "text-decoration-none text-primary" %>
+      <% else %>
+        <span class="text-muted">Uncategorized</span>
+      <% end %>
     </p>
   </div>
 </div>

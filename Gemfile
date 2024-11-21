@@ -69,3 +69,4 @@ gem "bootstrap", "~> 5.3" # For CSS framework
 gem "sass-rails", ">= 6" # For SCSS preprocessor
 gem "faker"
 gem "activeadmin"
+gem "nokogiri"

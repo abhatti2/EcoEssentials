@@ -5,9 +5,9 @@
   </div>
 <% end %>
 
-<% content_for :title, "Products" %>
+<% content_for :title, "Available Products" %>
 
-<h1 class="mb-4">Products</h1>
+<h1 class="mb-4">Available Products</h1>
 
 <%# Search form %>
 <div class="mb-3">
@@ -20,25 +20,29 @@
 </div>
 
 <%# Products listing %>
-<div id="products" class="row">
-  <% if @products.any? %>
+<div id="products" class="row row-cols-1 row-cols-md-3 g-4">
+  <% if @products&.any? %>
     <% @products.each do |product| %>
-      <div class="col-md-4 mb-4">
+      <div class="col">
         <div class="card h-100">
-          <%= render product %>
-          <div class="card-body">
-            <h5 class="card-title"><%= product.name %></h5>
-            <p class="card-text">
-              <%= truncate(product.description, length: 100, separator: ' ') %>
-            </p>
-            <p class="card-text">
-              <strong>Price:</strong> <%= number_to_currency(product.current_price, unit: "$", precision: 2) %>
-            </p>
-            <p class="card-text">
-              <strong>Category:</strong> <%= product.category&.name || "Uncategorized" %>
-            </p>
-            <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
-          </div>
+          <%# Render the product card if there's a partial for it %>
+          <% if lookup_context.template_exists?("products/_product") %>
+            <%= render product %>
+          <% else %>
+            <div class="card-body">
+              <h5 class="card-title"><%= product.name %></h5>
+              <p class="card-text">
+                <%= truncate(product.description, length: 100, separator: ' ') %>
+              </p>
+              <p class="card-text">
+                <strong>Price:</strong> <%= number_to_currency(product.current_price, unit: "$", precision: 2) %>
+              </p>
+              <p class="card-text">
+                <strong>Category:</strong> <%= product.category&.name || "Uncategorized" %>
+              </p>
+              <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+            </div>
+          <% end %>
         </div>
       </div>
     <% end %>
@@ -49,7 +53,7 @@
 
 <%# Pagination links %>
 <div class="mt-4">
-  <%= paginate @products %>
+  <%= paginate @products if @products.respond_to?(:total_pages) %>
 </div>
 
 <%# New product link (visible only to admin users via ActiveAdmin) %>

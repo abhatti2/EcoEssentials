@@ -1,10 +1,5 @@
 class HomeController < ApplicationController
   def index
-  end
-
-  def about
-  end
-
-  def contact
+    @products = Product.all.page(params[:page]).per(10)
   end
 end

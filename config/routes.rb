@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   # Static Pages (Dynamic Routes)
   get "/pages/:slug", to: "static_pages#show", as: :static_page
 
-  # Public routes
+  # Root route for the public home page
   root "home#index"
 
   # Public Product display routes
@@ -19,10 +19,7 @@ Rails.application.routes.draw do
     get :checkout
   end
 
-  # Remove manual admin routes as they are now handled by ActiveAdmin
-  # Cleaned up namespace :admin section
-
-  # Health check route (for server monitoring)
+  # Health check route for server monitoring
   get "up", to: "rails/health#show", as: :rails_health_check
 
   # Uncomment if using PWA (Progressive Web App) support
