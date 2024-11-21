@@ -1,26 +1,31 @@
-# Clear existing products
-Product.destroy_all
+# Clear existing products in development
+if Rails.env.development?
+  Product.destroy_all
+  puts "Cleared existing products."
+end
 
 # Seed realistic products
-10.times do
+product_names = 10.times.map { Faker::Commerce.product_name }.uniq
+product_names.each do |name|
   Product.create!(
-    name: Faker::Commerce.product_name, # Generates realistic product names
-    description: Faker::Lorem.sentence(word_count: 10), # More descriptive text
+    name: name,
+    description: Faker::Lorem.sentence(word_count: 10),
     current_price: Faker::Commerce.price(range: 5..100.0),
     stock_quantity: rand(10..50)
   )
 end
-puts "Seeded 10 realistic products."
+puts "Seeded #{product_names.size} realistic products."
 
+# Seed static pages
 StaticPage.create!(
   title: "About Us",
-  content: "This is the About Us page. Edit this content via the admin panel.",
+  content: "Welcome to Eco Essentials! We provide sustainable products that make the planet greener. This page can be updated via the admin panel.",
   slug: "about"
 )
 
 StaticPage.create!(
   title: "Contact Us",
-  content: "This is the Contact Us page. Edit this content via the admin panel.",
+  content: "Have questions? Reach out to us via this page. You can update this content via the admin panel.",
   slug: "contact"
 )
-AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?
+puts "Seeded static pages: About Us and Contact Us."

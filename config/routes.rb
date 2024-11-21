@@ -19,16 +19,8 @@ Rails.application.routes.draw do
     get :checkout
   end
 
-  # Admin routes (for custom controllers)
-  devise_for :admins
-
-  namespace :admin do
-    # Admin-specific product management
-    resources :products, except: [ :show ]
-
-    # Static page management for admin
-    resources :static_pages, only: [ :index, :edit, :update ]
-  end
+  # Remove manual admin routes as they are now handled by ActiveAdmin
+  # Cleaned up namespace :admin section
 
   # Health check route (for server monitoring)
   get "up", to: "rails/health#show", as: :rails_health_check

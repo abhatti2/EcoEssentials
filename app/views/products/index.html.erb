@@ -24,16 +24,16 @@
   <% if @products.any? %>
     <% @products.each do |product| %>
       <div class="col-md-4 mb-4">
-        <div class="card">
+        <div class="card h-100">
           <%# Render partial for each product (e.g., app/views/products/_product.html.erb) %>
           <%= render product %>
           <div class="card-body">
             <h5 class="card-title"><%= product.name %></h5>
             <p class="card-text">
-              <%= truncate(product.description, length: 100) %>
+              <%= truncate(product.description, length: 100, separator: ' ') %>
             </p>
             <p class="card-text">
-              <strong>Price:</strong> $<%= product.current_price %>
+              <strong>Price:</strong> $<%= number_to_currency(product.current_price, unit: "", precision: 2) %>
             </p>
             <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
           </div>
@@ -41,7 +41,7 @@
       </div>
     <% end %>
   <% else %>
-    <p class="text-muted">No products found.</p>
+    <p class="text-muted">No products found. Try a different search term.</p>
   <% end %>
 </div>
 
@@ -50,8 +50,8 @@
   <%= paginate @products %>
 </div>
 
-<%# New product link (visible only to admins) %>
-<% if admin_signed_in? %>
+<%# New product link (visible only to admin users via ActiveAdmin) %>
+<% if current_admin_user %>
   <div class="mt-3">
     <%= link_to "New Product", new_admin_product_path, class: "btn btn-success" %>
   </div>
