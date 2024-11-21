@@ -11,3 +11,16 @@ Product.destroy_all
   )
 end
 puts "Seeded 10 realistic products."
+
+StaticPage.create!(
+  title: "About Us",
+  content: "This is the About Us page. Edit this content via the admin panel.",
+  slug: "about"
+)
+
+StaticPage.create!(
+  title: "Contact Us",
+  content: "This is the Contact Us page. Edit this content via the admin panel.",
+  slug: "contact"
+)
+AdminUser.create!(email: 'admin@example.com', password: 'password', password_confirmation: 'password') if Rails.env.development?

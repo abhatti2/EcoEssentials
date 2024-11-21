@@ -1,8 +1,13 @@
 Rails.application.routes.draw do
+  # Devise for ActiveAdmin
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+
+  # Static Pages (Dynamic Routes)
+  get "/pages/:slug", to: "static_pages#show", as: :static_page
+
   # Public routes
   root "home#index"
-  get "about", to: "home#about"
-  get "contact", to: "home#contact"
 
   # Public Product display routes
   resources :products, only: [ :index, :show ]
@@ -14,12 +19,15 @@ Rails.application.routes.draw do
     get :checkout
   end
 
-  # Admin routes
+  # Admin routes (for custom controllers)
   devise_for :admins
 
   namespace :admin do
-    root to: "dashboard#index"
-    resources :products, except: [ :show ] # Admin-specific product management (add, edit, delete)
+    # Admin-specific product management
+    resources :products, except: [ :show ]
+
+    # Static page management for admin
+    resources :static_pages, only: [ :index, :edit, :update ]
   end
 
   # Health check route (for server monitoring)

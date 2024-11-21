@@ -62,9 +62,10 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem 'devise' # For authentication
-gem 'active_storage_validations' # For image uploads
-gem 'kaminari' # For pagination
-gem 'bootstrap', '~> 5.3' # For CSS framework
-gem 'sass-rails', '>= 6' # For SCSS preprocessor
-gem 'faker'
+gem "devise" # For authentication
+gem "active_storage_validations" # For image uploads
+gem "kaminari" # For pagination
+gem "bootstrap", "~> 5.3" # For CSS framework
+gem "sass-rails", ">= 6" # For SCSS preprocessor
+gem "faker"
+gem "activeadmin"
