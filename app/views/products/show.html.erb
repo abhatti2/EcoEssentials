@@ -10,11 +10,16 @@
     <p class="card-text text-muted"><%= simple_format(@product.description) %></p>
 
     <p class="card-text">
-      <span class="fw-bold">Price:</span> $<%= number_to_currency(@product.current_price, unit: "", precision: 2) %>
+      <span class="fw-bold">Price:</span> <%= number_to_currency(@product.current_price, unit: "$", precision: 2) %>
     </p>
 
     <p class="card-text">
       <span class="fw-bold">Stock:</span> <%= @product.stock_quantity %> available
+    </p>
+
+    <p class="card-text">
+      <span class="fw-bold">Category:</span>
+      <%= @product.category.present? ? link_to(@product.category.name, admin_category_path(@product.category), class: "text-decoration-none") : "Uncategorized" %>
     </p>
   </div>
 </div>

@@ -25,7 +25,6 @@
     <% @products.each do |product| %>
       <div class="col-md-4 mb-4">
         <div class="card h-100">
-          <%# Render partial for each product (e.g., app/views/products/_product.html.erb) %>
           <%= render product %>
           <div class="card-body">
             <h5 class="card-title"><%= product.name %></h5>
@@ -33,7 +32,10 @@
               <%= truncate(product.description, length: 100, separator: ' ') %>
             </p>
             <p class="card-text">
-              <strong>Price:</strong> $<%= number_to_currency(product.current_price, unit: "", precision: 2) %>
+              <strong>Price:</strong> <%= number_to_currency(product.current_price, unit: "$", precision: 2) %>
+            </p>
+            <p class="card-text">
+              <strong>Category:</strong> <%= product.category&.name || "Uncategorized" %>
             </p>
             <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
           </div>
