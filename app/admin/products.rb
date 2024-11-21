@@ -43,7 +43,7 @@ ActiveAdmin.register Product do
   form do |f|
     f.inputs "Product Details" do
       f.input :name, placeholder: "Enter the product name"
-      f.input :description, as: :textarea, placeholder: "Enter a brief description", input_html: { rows: 4 }
+      f.input :description, placeholder: "Enter a brief description", input_html: { rows: 4 }
       f.input :current_price, placeholder: "Enter the product price", hint: "Use decimal format (e.g., 19.99)"
       f.input :stock_quantity, placeholder: "Enter available stock quantity", hint: "Enter a whole number"
       f.input :category, as: :select, collection: Category.all.map { |category| [ category.name, category.id ] }, include_blank: "Select a category"
