@@ -4,6 +4,9 @@ class Category < ApplicationRecord
   # Validations for data integrity
   validates :name, presence: true, uniqueness: { case_sensitive: false }
 
+  # Default scope to order categories by name
+  default_scope { order(:name) }
+
   # Define ransackable attributes for ActiveAdmin search functionality
   def self.ransackable_attributes(auth_object = nil)
     %w[id name created_at updated_at]

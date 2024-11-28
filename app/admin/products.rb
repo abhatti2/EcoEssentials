@@ -5,7 +5,7 @@ ActiveAdmin.register Product do
   # Index Page Configuration
   index do
     h2 "Manage Products", class: "title-with-count"
-    div class: "panel" do
+    div class: "panel mb-4" do
       div class: "panel-header" do
         link_to "Add New Product", new_admin_product_path, class: "btn btn-primary"
       end
@@ -35,8 +35,8 @@ ActiveAdmin.register Product do
   # Filters for searching products
   filter :name
   filter :category, as: :select, collection: -> { Category.pluck(:name, :id) }
-  filter :current_price
-  filter :stock_quantity
+  filter :current_price, as: :numeric_range_filter
+  filter :stock_quantity, as: :numeric_range_filter
   filter :created_at
 
   # Form for creating and editing products
@@ -60,7 +60,7 @@ ActiveAdmin.register Product do
         simple_format(product.description)
       end
       row "Category" do |product|
-        product.category&.name || "Unassigned"
+        product.category.present? ? link_to(product.category.name, admin_category_path(product.category), class: "text-decoration-none") : "Unassigned"
       end
       row :current_price do |product|
         number_to_currency(product.current_price, unit: "$")
@@ -79,7 +79,9 @@ ActiveAdmin.register Product do
   sidebar "Product Details", only: :show do
     attributes_table_for resource do
       row :id
-      row :category
+      row "Category" do |product|
+        product.category&.name || "Unassigned"
+      end
       row :created_at
       row :updated_at
     end

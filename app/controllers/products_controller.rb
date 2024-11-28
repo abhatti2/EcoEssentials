@@ -3,13 +3,22 @@ class ProductsController < ApplicationController
 
   # GET /products or /products.json
   def index
-    # Search and paginate the products, includes categories for optimization
-    @products = Product.includes(:category).search(params[:query]).page(params[:page]).per(10)
+    @categories = Category.all # Fetch all categories for the dropdown
+
+    # Start with all products and apply search and filter logic
+    @products = Product.includes(:category).search(params[:query])
+
+    # Filter by category if `category_id` is provided
+    if params[:category_id].present?
+      @products = @products.where(category_id: params[:category_id])
+    end
+
+    # Paginate results
+    @products = @products.page(params[:page]).per(10)
   end
 
   # GET /products/1 or /products/1.json
-  def show
-  end
+  def show; end
 
   # GET /products/new
   def new
@@ -17,8 +26,7 @@ class ProductsController < ApplicationController
   end
 
   # GET /products/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /products or /products.json
   def create
@@ -42,7 +50,7 @@ class ProductsController < ApplicationController
     end
   end
 
-  # DELETE /products/1 or /products/1.json
+  # DELETE /products/1 or /products.json
   def destroy
     if @product.destroy
       redirect_to products_path, notice: "Product was successfully destroyed.", status: :see_other

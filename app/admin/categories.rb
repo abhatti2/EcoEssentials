@@ -48,8 +48,8 @@ ActiveAdmin.register Category do
           column :stock_quantity
           column :created_at
           column("") do |product|
-            span link_to "View", admin_product_path(product)
-            span link_to "Edit", edit_admin_product_path(product), class: "ml-2"
+            span link_to "View", admin_product_path(product), class: "btn btn-sm btn-info"
+            span link_to "Edit", edit_admin_product_path(product), class: "btn btn-sm btn-warning ml-2"
           end
         end
       else
@@ -64,6 +64,13 @@ ActiveAdmin.register Category do
   sidebar "Category Details", only: [ :show, :edit ] do
     ul do
       li "Total Products: #{category.products.count}"
+      li "Average Price: #{number_to_currency(category.products.average(:current_price) || 0, unit: "$")}"
     end
+  end
+
+  # Batch actions for assigning or removing categories (optional)
+  batch_action :assign_to_category, form: -> { { Category: Category.pluck(:name, :id) } } do |ids, inputs|
+    Category.find(inputs["Category"]).products << Product.find(ids)
+    redirect_back fallback_location: admin_categories_path, notice: "Products successfully assigned to category."
   end
 end
