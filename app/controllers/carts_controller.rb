@@ -18,6 +18,18 @@ class CartsController < ApplicationController
     end
   end
 
+  def update_quantity
+    product_id = params[:product_id]
+    quantity = params[:quantity].to_i
+
+    if valid_product_and_quantity?(product_id, quantity)
+      session[:cart][product_id] = quantity
+      redirect_to cart_path, notice: "Quantity updated successfully."
+    else
+      redirect_to cart_path, alert: "Invalid product or quantity."
+    end
+  end
+
   def remove
     product_id = params[:product_id]
 

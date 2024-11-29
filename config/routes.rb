@@ -15,6 +15,7 @@ Rails.application.routes.draw do
   # Cart routes
   resource :cart, only: [ :show ] do
     post :add, to: "carts#add", as: :add
+    patch :update_quantity, to: "carts#update_quantity", as: :update_quantity # New route for updating quantity
     delete :remove, to: "carts#remove", as: :remove
     delete :clear, to: "carts#clear", as: :clear # Add the clear_cart route
     get :checkout, to: "carts#checkout", as: :checkout
