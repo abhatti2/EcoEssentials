@@ -1,7 +1,11 @@
-<%# Display flash notice messages %>
+<%# Display flash messages %>
 <% if notice.present? %>
   <div class="alert alert-success" role="alert">
     <%= notice %>
+  </div>
+<% elsif alert.present? %>
+  <div class="alert alert-danger" role="alert">
+    <%= alert %>
   </div>
 <% end %>
 
@@ -33,7 +37,6 @@
     <% @products.each do |product| %>
       <div class="col">
         <div class="card h-100">
-          <%# Render the product card if there's a partial for it %>
           <% if lookup_context.template_exists?("products/_product") %>
             <%= render product %>
           <% else %>
@@ -48,6 +51,17 @@
               <p class="card-text">
                 <strong>Category:</strong> <%= product.category&.name || "Uncategorized" %>
               </p>
+
+              <%# Add to Cart Form %>
+              <%= form_with url: add_cart_path, method: :post, local: true do |f| %>
+                <div class="input-group mb-3">
+                  <%= f.hidden_field :product_id, value: product.id %>
+                  <%= f.number_field :quantity, value: 1, class: "form-control", min: 1, placeholder: "Quantity" %>
+                  <button type="submit" class="btn btn-success">Add to Cart</button>
+                </div>
+              <% end %>
+
+              <%# View Details Link %>
               <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
             </div>
           <% end %>

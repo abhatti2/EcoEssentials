@@ -1,16 +1,29 @@
-<div id="<%= dom_id product %>" class="card mb-4">
+<div id="<%= dom_id(product) %>" class="card mb-4 shadow-sm">
   <div class="card-body">
-    <h5 class="card-title"><%= product.name %></h5>
-    <p class="card-text text-muted"><%= truncate(product.description, length: 100) %></p>
+    <h5 class="card-title text-primary"><%= product.name %></h5>
+    <p class="card-text text-muted"><%= truncate(product.description, length: 100, separator: ' ') %></p>
 
     <p class="card-text">
-      <strong>Price:</strong> $<%= product.current_price %>
+      <strong>Price:</strong> <%= number_to_currency(product.current_price, unit: "$", precision: 2) %>
     </p>
 
     <p class="card-text">
       <strong>Stock:</strong> <%= product.stock_quantity %>
     </p>
 
-    <%= link_to "View Details", product_path(product), class: "btn btn-primary" %>
+    <p class="card-text">
+      <strong>Category:</strong> <%= product.category&.name || "Uncategorized" %>
+    </p>
+
+    <div class="d-flex justify-content-between align-items-center mt-3">
+      <%= link_to "View Details", product_path(product), class: "btn btn-primary btn-sm" %>
+
+      <%# Add to Cart Form %>
+      <%= form_with url: add_cart_path, method: :post, local: true do |f| %>
+        <%= f.hidden_field :product_id, value: product.id %>
+        <%= f.hidden_field :quantity, value: 1 %>
+        <button type="submit" class="btn btn-success btn-sm">Add to Cart</button>
+      <% end %>
+    </div>
   </div>
 </div>

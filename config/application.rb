@@ -11,17 +11,23 @@ module EcoEssentials
     # Initialize configuration defaults for originally generated Rails version.
     config.load_defaults 8.0
 
-    # Please, add to the `ignore` list any other `lib` subdirectories that do
-    # not contain `.rb` files, or that should not be reloaded or eager loaded.
-    # Common ones are `templates`, `generators`, or `middleware`, for example.
-    config.autoload_lib(ignore: %w[assets tasks])
+    # Add the `lib` directory to autoload and eager load paths
+    config.autoload_paths << Rails.root.join("lib")
+    config.eager_load_paths << Rails.root.join("lib")
 
-    # Configuration for the application, engines, and railties goes here.
+    # Add other subdirectories under `lib` to ignore specific files or folders
+    # Explicit ignoring or configuration for subdirectories in `lib` is not standard.
+    # Manage your structure in `lib` to follow Rails conventions (like `.rb` files).
+
+    # General application configuration
     #
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
+    # Example: Set your default time zone
     # config.time_zone = "Central Time (US & Canada)"
+    #
+    # Example: Add additional eager load paths for custom files:
     # config.eager_load_paths << Rails.root.join("extras")
   end
 end

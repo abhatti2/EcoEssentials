@@ -1,2 +1,54 @@
-<h1>Carts#show</h1>
-<p>Find me in app/views/carts/show.html.erb</p>
+<h1>Your Shopping Cart</h1>
+
+<% if @cart_items.any? %>
+  <table class="table table-striped table-bordered">
+    <thead class="table-dark">
+      <tr>
+        <th>Product</th>
+        <th>Price</th>
+        <th>Quantity</th>
+        <th>Total</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @cart_items.each do |entry| %>
+        <tr>
+          <td>
+            <%= link_to entry[:product].name, product_path(entry[:product]), class: "text-decoration-none" %>
+          </td>
+          <td>
+            <%= number_to_currency(entry[:product].current_price, unit: "$", precision: 2) %>
+          </td>
+          <td>
+            <%= entry[:quantity] %>
+          </td>
+          <td>
+            <%= number_to_currency(entry[:product].current_price * entry[:quantity], unit: "$", precision: 2) %>
+          </td>
+          <td>
+            <%= button_to "Remove", remove_cart_path(product_id: entry[:product].id),
+                  method: :delete,
+                  class: "btn btn-danger btn-sm",
+                  data: { confirm: "Are you sure you want to remove this product?" } %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <div class="mt-4">
+    <h4>Total: <%= number_to_currency(@cart_items.sum { |entry| entry[:product].current_price * entry[:quantity] }, unit: "$", precision: 2) %></h4>
+  </div>
+
+  <div class="d-flex justify-content-between align-items-center mt-4">
+    <%= button_to "Clear Cart", clear_cart_path, method: :delete, class: "btn btn-warning", data: { confirm: "Are you sure you want to clear the cart?" } %>
+    <%= link_to "Proceed to Checkout", checkout_cart_path, class: "btn btn-success" %>
+  </div>
+<% else %>
+  <p class="text-muted">Your cart is empty.</p>
+<% end %>
+
+<div class="mt-4">
+  <%= link_to "Continue Shopping", products_path, class: "btn btn-primary" %>
+</div>
