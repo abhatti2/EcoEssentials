@@ -21,12 +21,18 @@
             <%= number_to_currency(entry[:product].current_price, unit: "$", precision: 2) %>
           </td>
           <td>
-            <%= entry[:quantity] %>
+            <%# Quantity Editing Form %>
+            <%= form_with url: update_quantity_cart_path, method: :patch, local: true, class: "d-flex align-items-center" do |f| %>
+              <%= f.hidden_field :product_id, value: entry[:product].id %>
+              <%= f.number_field :quantity, value: entry[:quantity], class: "form-control form-control-sm me-2", min: 1 %>
+              <%= f.submit "Update", class: "btn btn-primary btn-sm" %>
+            <% end %>
           </td>
           <td>
             <%= number_to_currency(entry[:product].current_price * entry[:quantity], unit: "$", precision: 2) %>
           </td>
           <td>
+            <%# Remove Item Button %>
             <%= button_to "Remove", remove_cart_path(product_id: entry[:product].id),
                   method: :delete,
                   class: "btn btn-danger btn-sm",
