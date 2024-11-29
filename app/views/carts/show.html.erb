@@ -13,19 +13,19 @@
     </thead>
     <tbody>
       <% @cart_items.each do |entry| %>
-        <tr>
+        <tr id="<%= dom_id(entry[:product]) %>">
           <td>
-            <%= link_to entry[:product].name, product_path(entry[:product]), class: "text-decoration-none" %>
+            <%= link_to entry[:product].name, product_path(entry[:product]), class: "text-decoration-none", aria: { label: entry[:product].name } %>
           </td>
           <td>
             <%= number_to_currency(entry[:product].current_price, unit: "$", precision: 2) %>
           </td>
           <td>
             <%# Quantity Editing Form %>
-            <%= form_with url: update_quantity_cart_path, method: :patch, local: true, class: "d-flex align-items-center" do |f| %>
+            <%= form_with url: update_quantity_cart_path, method: :patch, local: true, class: "d-flex align-items-center quantity-form" do |f| %>
               <%= f.hidden_field :product_id, value: entry[:product].id %>
-              <%= f.number_field :quantity, value: entry[:quantity], class: "form-control form-control-sm me-2", min: 1 %>
-              <%= f.submit "Update", class: "btn btn-primary btn-sm" %>
+              <%= f.number_field :quantity, value: entry[:quantity], class: "form-control form-control-sm me-2 quantity-field", min: 1, aria: { label: "Quantity for #{entry[:product].name}" } %>
+              <%= f.submit "Update", class: "btn btn-primary btn-sm update-btn", disabled: true, aria: { label: "Update quantity for #{entry[:product].name}" } %>
             <% end %>
           </td>
           <td>
@@ -36,7 +36,8 @@
             <%= button_to "Remove", remove_cart_path(product_id: entry[:product].id),
                   method: :delete,
                   class: "btn btn-danger btn-sm",
-                  data: { confirm: "Are you sure you want to remove this product?" } %>
+                  data: { confirm: "Are you sure you want to remove this product?" },
+                  aria: { label: "Remove #{entry[:product].name} from cart" } %>
           </td>
         </tr>
       <% end %>
@@ -49,12 +50,35 @@
 
   <div class="d-flex justify-content-between align-items-center mt-4">
     <%= button_to "Clear Cart", clear_cart_path, method: :delete, class: "btn btn-warning", data: { confirm: "Are you sure you want to clear the cart?" } %>
-    <%= link_to "Proceed to Checkout", checkout_cart_path, class: "btn btn-success" %>
+    <%= link_to "Proceed to Checkout", checkout_cart_path, class: "btn btn-success", aria: { label: "Proceed to checkout" } %>
   </div>
 <% else %>
   <p class="text-muted">Your cart is empty.</p>
 <% end %>
 
 <div class="mt-4">
-  <%= link_to "Continue Shopping", products_path, class: "btn btn-primary" %>
+  <%= link_to "Continue Shopping", products_path, class: "btn btn-primary", aria: { label: "Continue shopping" } %>
 </div>
+
+<%= javascript_tag do %>
+  document.addEventListener("DOMContentLoaded", function() {
+    // Enable submit button only if quantity changes and is valid
+    document.querySelectorAll(".quantity-field").forEach(function(input) {
+      input.addEventListener("input", function() {
+        const form = input.closest(".quantity-form");
+        const submitButton = form.querySelector(".update-btn");
+        const currentValue = parseInt(input.value, 10);
+        const defaultValue = parseInt(input.defaultValue, 10);
+
+        // Enable button if value is valid and has changed
+        if (currentValue > 0 && currentValue !== defaultValue) {
+          submitButton.disabled = false;
+          submitButton.classList.add("btn-primary");
+        } else {
+          submitButton.disabled = true;
+          submitButton.classList.remove("btn-primary");
+        }
+      });
+    });
+  });
+<% end %>

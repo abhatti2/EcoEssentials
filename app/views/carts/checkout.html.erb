@@ -1,2 +1,123 @@
-<h1>Carts#checkout</h1>
-<p>Find me in app/views/carts/checkout.html.erb</p>
+<h1>Checkout</h1>
+
+<%# Display any errors if present %>
+<% if @customer.errors.any? %>
+  <div class="alert alert-danger" role="alert" aria-labelledby="error-summary">
+    <h4 id="error-summary"><%= pluralize(@customer.errors.count, "error") %> prohibited this order from being saved:</h4>
+    <ul>
+      <% @customer.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<div class="row">
+  <div class="col-md-6">
+    <h2>Customer Information</h2>
+    <%= form_with model: @customer, url: place_order_cart_path, method: :post, local: true, id: "checkout-form" do |f| %>
+      <div class="mb-3">
+        <%= f.label :first_name, "First Name" %>
+        <%= f.text_field :first_name, class: "form-control", required: true, aria: { label: "First Name" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :last_name, "Last Name" %>
+        <%= f.text_field :last_name, class: "form-control", required: true, aria: { label: "Last Name" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :email, "Email Address" %>
+        <%= f.email_field :email, class: "form-control", required: true, aria: { label: "Email Address" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :address, "Address" %>
+        <%= f.text_field :address, class: "form-control", required: true, aria: { label: "Address" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :city, "City" %>
+        <%= f.text_field :city, class: "form-control", required: true, aria: { label: "City" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :postal_code, "Postal Code" %>
+        <%= f.text_field :postal_code, class: "form-control", required: true, aria: { label: "Postal Code" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :phone, "Phone Number" %>
+        <%= f.telephone_field :phone, class: "form-control", required: true, aria: { label: "Phone Number" } %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :province, "Province" %>
+        <%= f.select :province, options_for_select(@provinces, selected: @customer.province), class: "form-select province-selector", required: true, aria: { label: "Province" } %>
+      </div>
+
+      <div class="text-center mt-4">
+        <%= f.submit "Place Order", class: "btn btn-success btn-lg" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="col-md-6">
+    <h2>Order Summary</h2>
+    <div id="order-summary">
+      <table class="table table-bordered">
+        <thead class="table-dark">
+          <tr>
+            <th>Product</th>
+            <th>Price</th>
+            <th>Quantity</th>
+            <th>Total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @cart_items.each do |entry| %>
+            <tr>
+              <td><%= entry[:product].name %></td>
+              <td><%= number_to_currency(entry[:product].current_price) %></td>
+              <td><%= entry[:quantity] %></td>
+              <td><%= number_to_currency(entry[:product].current_price * entry[:quantity]) %></td>
+            </tr>
+          <% end %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th colspan="3">Subtotal</th>
+            <td><%= number_to_currency(@subtotal) %></td>
+          </tr>
+          <tr>
+            <th colspan="3">PST</th>
+            <td><%= number_to_currency(@pst) %></td>
+          </tr>
+          <tr>
+            <th colspan="3">GST</th>
+            <td><%= number_to_currency(@gst) %></td>
+          </tr>
+          <tr>
+            <th colspan="3">HST</th>
+            <td><%= number_to_currency(@hst) %></td>
+          </tr>
+          <tr class="table-success">
+            <th colspan="3">Total</th>
+            <td><%= number_to_currency(@total) %></td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%= javascript_tag do %>
+  document.addEventListener("DOMContentLoaded", function() {
+    const provinceSelector = document.querySelector(".province-selector");
+    const checkoutForm = document.getElementById("checkout-form");
+
+    provinceSelector.addEventListener("change", function() {
+      checkoutForm.submit(); // Submit the form to update the summary dynamically
+    });
+  });
+<% end %>

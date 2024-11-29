@@ -15,10 +15,11 @@ Rails.application.routes.draw do
   # Cart routes
   resource :cart, only: [ :show ] do
     post :add, to: "carts#add", as: :add
-    patch :update_quantity, to: "carts#update_quantity", as: :update_quantity # New route for updating quantity
+    patch :update_quantity, to: "carts#update_quantity", as: :update_quantity
     delete :remove, to: "carts#remove", as: :remove
-    delete :clear, to: "carts#clear", as: :clear # Add the clear_cart route
+    delete :clear, to: "carts#clear", as: :clear
     get :checkout, to: "carts#checkout", as: :checkout
+    post :place_order, to: "carts#place_order", as: :place_order
   end
 
   # Health check route for server monitoring
