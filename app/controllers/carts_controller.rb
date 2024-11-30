@@ -75,46 +75,36 @@ class CartsController < ApplicationController
   end
 
   def place_order
-    @customer = Customer.new(customer_params)
+    @cart_items = fetch_cart_items
+
+    if @cart_items.empty?
+      redirect_to cart_path, alert: "Your cart is empty. Add items before placing an order."
+      return
+    end
+
+    @customer = Customer.find_or_initialize_by(email: customer_params[:email])
+    @customer.assign_attributes(customer_params)
 
     if @customer.save
-      @cart_items = fetch_cart_items
       ActiveRecord::Base.transaction do
-        order = Order.new(
+        @order = Order.create!(
           customer: @customer,
           order_date: Time.zone.now,
           status: "pending",
           total_amount: calculate_total_with_taxes(@customer.province)
         )
 
-        if order.save
-          @cart_items.each do |entry|
-            order_item = order.order_items.new(
-              product: entry[:product],
-              quantity: entry[:quantity],
-              price_at_purchase: entry[:product].current_price
-            )
-            unless order_item.save
-              @order_item_errors = order_item.errors.full_messages
-              raise ActiveRecord::Rollback
-            end
-          end
-        else
-          @order_errors = order.errors.full_messages
-          raise ActiveRecord::Rollback
+        @cart_items.each do |entry|
+          @order.order_items.create!(
+            product: entry[:product],
+            quantity: entry[:quantity],
+            price_at_purchase: entry[:product].current_price
+          )
         end
       end
 
-      if @order_item_errors || @order_errors
-        flash.now[:alert] = "Please correct the errors below."
-        @cart_items = fetch_cart_items
-        @provinces = province_tax_rates.keys
-        calculate_summary(@customer.province)
-        render :checkout
-      else
-        session[:cart] = nil
-        redirect_to order_confirmation_path(order.id), notice: "Checkout successful! Thank you for your purchase."
-      end
+      session[:cart] = nil
+      redirect_to order_confirmation_path(@order.id), notice: "Checkout successful! Thank you for your purchase."
     else
       flash.now[:alert] = "Please correct the errors in the form."
       @cart_items = fetch_cart_items
@@ -122,7 +112,7 @@ class CartsController < ApplicationController
       calculate_summary(customer_params[:province])
       render :checkout
     end
-  rescue => e
+  rescue ActiveRecord::RecordInvalid => e
     logger.error "Order placement failed: #{e.message}"
     flash.now[:alert] = "An error occurred while placing your order. Please try again."
     @cart_items = fetch_cart_items
@@ -142,6 +132,8 @@ class CartsController < ApplicationController
   end
 
   def fetch_cart_items
+    return [] if session[:cart].blank?
+
     product_ids = session[:cart].keys
     products = Product.where(id: product_ids).index_by(&:id)
 
