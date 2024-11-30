@@ -19,8 +19,12 @@ Rails.application.routes.draw do
     delete :remove, to: "carts#remove", as: :remove
     delete :clear, to: "carts#clear", as: :clear
     get :checkout, to: "carts#checkout", as: :checkout
+    patch :update_summary, to: "carts#update_summary", as: :update_summary # Route for updating the order summary
     post :place_order, to: "carts#place_order", as: :place_order
   end
+
+  # Order confirmation route
+  get "order_confirmation/:id", to: "orders#show", as: :order_confirmation # Route for displaying the order confirmation
 
   # Health check route for server monitoring
   get "up", to: "rails/health#show", as: :rails_health_check

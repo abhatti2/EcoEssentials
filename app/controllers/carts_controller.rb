@@ -59,6 +59,21 @@ class CartsController < ApplicationController
     calculate_summary(@provinces.first)
   end
 
+  def update_summary
+    @customer = Customer.new(customer_params)
+    @cart_items = fetch_cart_items
+    @provinces = province_tax_rates.keys
+
+    if @customer.valid?
+      calculate_summary(@customer.province)
+      flash.now[:notice] = "Order summary updated."
+    else
+      flash.now[:alert] = "Please correct the errors in the form."
+    end
+
+    render :checkout
+  end
+
   def place_order
     @customer = Customer.new(customer_params)
 
@@ -80,20 +95,17 @@ class CartsController < ApplicationController
               price_at_purchase: entry[:product].current_price
             )
             unless order_item.save
-              # Collect order item errors
               @order_item_errors = order_item.errors.full_messages
               raise ActiveRecord::Rollback
             end
           end
         else
-          # Collect order errors
           @order_errors = order.errors.full_messages
           raise ActiveRecord::Rollback
         end
       end
 
       if @order_item_errors || @order_errors
-        # If there were errors, re-render the checkout page with error messages
         flash.now[:alert] = "Please correct the errors below."
         @cart_items = fetch_cart_items
         @provinces = province_tax_rates.keys
@@ -101,7 +113,7 @@ class CartsController < ApplicationController
         render :checkout
       else
         session[:cart] = nil
-        redirect_to root_path, notice: "Checkout successful! Thank you for your purchase."
+        redirect_to order_confirmation_path(order.id), notice: "Checkout successful! Thank you for your purchase."
       end
     else
       flash.now[:alert] = "Please correct the errors in the form."

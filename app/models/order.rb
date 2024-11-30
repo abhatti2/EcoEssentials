@@ -17,6 +17,7 @@ class Order < ApplicationRecord
 
   # Callbacks
   before_validation :set_default_status, on: :create
+  before_save :ensure_total_amount
 
   # Helper methods
 
@@ -27,13 +28,13 @@ class Order < ApplicationRecord
 
   # Mark the order as completed
   def complete!
-    return false unless status == "processing" || status == "pending"
+    return false unless %w[processing pending].include?(status)
     update!(status: "completed", order_date: Time.current)
   end
 
   # Mark the order as canceled
   def cancel!
-    return false unless status == "pending" || status == "processing"
+    return false unless %w[pending processing].include?(status)
     update!(status: "canceled")
   end
 
@@ -42,5 +43,10 @@ class Order < ApplicationRecord
   # Set default status to 'pending' if not already set
   def set_default_status
     self.status ||= "pending"
+  end
+
+  # Ensure total amount is calculated before saving
+  def ensure_total_amount
+    calculate_total if total_amount.nil? || total_amount.zero?
   end
 end
