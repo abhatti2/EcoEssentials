@@ -29,6 +29,9 @@ Rails.application.routes.draw do
     post :place_order, to: "carts#place_order", as: :place_order
   end
 
+  # Order routes
+  resources :orders, only: [ :index, :show ] # Route for viewing order history and order details
+
   # Order confirmation route
   get "order_confirmation/:id", to: "orders#show", as: :order_confirmation # Route for displaying the order confirmation
 

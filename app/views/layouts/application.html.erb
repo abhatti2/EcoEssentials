@@ -58,6 +58,9 @@
                 <a class="nav-link">Welcome, <%= current_user.first_name %> <%= current_user.last_name %></a>
               </li>
               <li class="nav-item">
+                <a class="nav-link <%= "active" if current_page?(orders_path) %>" href="<%= orders_path %>">Order History</a>
+              </li>
+              <li class="nav-item">
                 <%= button_to "Log Out", destroy_user_session_path, method: :delete, class: "btn btn-link text-danger nav-link", data: { confirm: "Are you sure you want to log out?" }, form: { class: "d-inline" } %>
               </li>
             <% else %>
@@ -67,20 +70,19 @@
               <li class="nav-item">
                 <%= link_to "Log In", new_user_session_path, class: "nav-link" %>
               </li>
-              <%# Admin Authentication Links %>
-              <% if !current_admin_user %>
-                <li class="nav-item">
-                  <%= link_to "Admin Login", new_admin_user_session_path, class: "nav-link" %>
-                </li>
-              <% end %>
             <% end %>
 
+            <%# Admin Authentication Links %>
             <% if current_admin_user %>
               <li class="nav-item">
                 <a class="nav-link <%= "active" if current_page?(admin_root_path) %>" href="<%= admin_root_path %>">Admin Dashboard</a>
               </li>
               <li class="nav-item">
                 <%= link_to "Admin Log Out", destroy_admin_user_session_path, method: :delete, class: "nav-link text-danger ms-3", data: { confirm: "Are you sure you want to log out?" } %>
+              </li>
+            <% elsif !user_signed_in? %>
+              <li class="nav-item">
+                <%= link_to "Admin Login", new_admin_user_session_path, class: "nav-link" %>
               </li>
             <% end %>
           </ul>
