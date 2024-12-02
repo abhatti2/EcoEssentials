@@ -54,9 +54,9 @@ class CartsController < ApplicationController
       return
     end
 
-    @customer = Customer.new
+    @customer = user_signed_in? ? map_user_to_customer(current_user) : Customer.new
     @provinces = province_tax_rates.keys
-    calculate_summary(@provinces.first)
+    calculate_summary(@customer.province || @provinces.first)
   end
 
   def update_summary
@@ -64,7 +64,7 @@ class CartsController < ApplicationController
     @cart_items = fetch_cart_items
     @provinces = province_tax_rates.keys
 
-    if @customer.valid?
+    if @customer.valid?(:tax_calculation) # Use custom validation context
       calculate_summary(@customer.province)
       flash.now[:notice] = "Order summary updated."
     else
@@ -82,7 +82,7 @@ class CartsController < ApplicationController
       return
     end
 
-    @customer = Customer.find_or_initialize_by(email: customer_params[:email])
+    @customer = user_signed_in? ? map_user_to_customer(current_user) : Customer.find_or_initialize_by(email: customer_params[:email])
     @customer.assign_attributes(customer_params)
 
     if @customer.save
@@ -144,7 +144,19 @@ class CartsController < ApplicationController
   end
 
   def customer_params
-    params.require(:customer).permit(:first_name, :last_name, :email, :address, :city, :postal_code, :phone, :province)
+    params.fetch(:customer, {}).permit(:first_name, :last_name, :email, :address, :city, :postal_code, :phone, :province)
+  end
+
+  def map_user_to_customer(user)
+    Customer.find_or_create_by(email: user.email) do |customer|
+      customer.first_name = user.first_name
+      customer.last_name = user.last_name
+      customer.address = user.address
+      customer.city = user.city
+      customer.province = user.province
+      customer.postal_code = user.postal_code
+      customer.phone = user.phone
+    end
   end
 
   def calculate_total_with_taxes(province)

@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  # Devise for Users with custom controllers
+  devise_for :users, controllers: {
+    registrations: "users/registrations",
+    sessions: "devise/sessions"
+  }
+
   # Devise for ActiveAdmin
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)

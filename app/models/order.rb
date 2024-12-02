@@ -1,6 +1,7 @@
 class Order < ApplicationRecord
   # Associations
-  belongs_to :customer
+  belongs_to :user, optional: true # For authenticated users
+  belongs_to :customer, optional: true # For guest users
   has_many :order_items, dependent: :destroy
 
   # Validations
@@ -24,6 +25,15 @@ class Order < ApplicationRecord
   # Calculates the total amount for the order by summing its items
   def calculate_total
     self.total_amount = order_items.sum { |item| item.price_at_purchase * item.quantity }
+  end
+
+  # Calculates the total amount, including taxes, for the order
+  def calculate_total_with_taxes(province, tax_rates)
+    subtotal = order_items.sum { |item| item.price_at_purchase * item.quantity }
+    pst = subtotal * (tax_rates[:pst] || 0.0)
+    gst = subtotal * (tax_rates[:gst] || 0.0)
+    hst = subtotal * (tax_rates[:hst] || 0.0)
+    self.total_amount = subtotal + pst + gst + hst
   end
 
   # Mark the order as completed

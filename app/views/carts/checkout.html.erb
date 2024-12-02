@@ -18,37 +18,37 @@
     <%= form_with model: @customer, url: update_summary_cart_path, method: :patch, local: true, id: "update-summary-form" do |f| %>
       <div class="mb-3">
         <%= f.label :first_name, "First Name" %>
-        <%= f.text_field :first_name, class: "form-control", required: true, aria: { label: "First Name" } %>
+        <%= f.text_field :first_name, class: "form-control", value: @customer.first_name, required: true, aria: { label: "First Name" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :last_name, "Last Name" %>
-        <%= f.text_field :last_name, class: "form-control", required: true, aria: { label: "Last Name" } %>
+        <%= f.text_field :last_name, class: "form-control", value: @customer.last_name, required: true, aria: { label: "Last Name" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :email, "Email Address" %>
-        <%= f.email_field :email, class: "form-control", required: true, aria: { label: "Email Address" } %>
+        <%= f.email_field :email, class: "form-control", value: @customer.email, required: true, aria: { label: "Email Address" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :address, "Address" %>
-        <%= f.text_field :address, class: "form-control", required: true, aria: { label: "Address" } %>
+        <%= f.text_field :address, class: "form-control", value: @customer.address, required: true, aria: { label: "Address" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :city, "City" %>
-        <%= f.text_field :city, class: "form-control", required: true, aria: { label: "City" } %>
+        <%= f.text_field :city, class: "form-control", value: @customer.city, required: true, aria: { label: "City" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :postal_code, "Postal Code" %>
-        <%= f.text_field :postal_code, class: "form-control", required: true, aria: { label: "Postal Code" } %>
+        <%= f.text_field :postal_code, class: "form-control", value: @customer.postal_code, required: true, aria: { label: "Postal Code" } %>
       </div>
 
       <div class="mb-3">
         <%= f.label :phone, "Phone Number" %>
-        <%= f.telephone_field :phone, class: "form-control", required: true, aria: { label: "Phone Number" } %>
+        <%= f.telephone_field :phone, class: "form-control", value: @customer.phone, required: true, aria: { label: "Phone Number" } %>
       </div>
 
       <div class="mb-3">
@@ -58,15 +58,6 @@
 
       <div class="text-center mt-4">
         <%= f.submit "Update Order Summary", class: "btn btn-secondary btn-lg me-2" %>
-      </div>
-    <% end %>
-
-    <%= form_with model: @customer, url: place_order_cart_path, method: :post, local: true, id: "place-order-form" do |f| %>
-      <% @customer.attributes.each do |name, value| %>
-        <%= f.hidden_field name, value: value %>
-      <% end %>
-      <div class="text-center mt-4">
-        <%= f.submit "Place Order", class: "btn btn-success btn-lg" %>
       </div>
     <% end %>
   </div>
@@ -117,5 +108,21 @@
         </tfoot>
       </table>
     </div>
+
+    <%# Place Order Form %>
+    <%= form_with url: place_order_cart_path, method: :post, local: true, id: "place-order-form" do |f| %>
+      <% if user_signed_in? %>
+        <%# Pass only the necessary hidden fields for signed-in users %>
+        <%= f.hidden_field :province, value: @customer.province %>
+      <% else %>
+        <%# Pass all customer attributes for guest users %>
+        <% @customer.attributes.each do |name, value| %>
+          <%= f.hidden_field name, value: value %>
+        <% end %>
+      <% end %>
+      <div class="text-center mt-4">
+        <%= f.submit "Place Order", class: "btn btn-success btn-lg" %>
+      </div>
+    <% end %>
   </div>
 </div>
