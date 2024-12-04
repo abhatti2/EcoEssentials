@@ -1,6 +1,13 @@
 class Product < ApplicationRecord
   belongs_to :category, optional: true
 
+  # Validations
+  validates :name, presence: true, uniqueness: true, length: { minimum: 3, maximum: 100 }
+  validates :description, presence: true, length: { minimum: 10, maximum: 1000 }
+  validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
+  validates :stock, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :category, presence: true
+
   # Scope for searching products by query and filtering by category name
   scope :search, ->(query) {
     if query.present?
