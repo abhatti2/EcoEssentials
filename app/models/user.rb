@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   # Validations
   validates :first_name, :last_name, :address, :city, :province, :postal_code, :phone, presence: true
+  validates :email, presence: true, format: { with: URI::MailTo::EMAIL_REGEXP }, uniqueness: { case_sensitive: false }
   validates :postal_code, format: { with: /\A[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d\z/, message: "must be a valid Canadian postal code" }
   validates :phone, format: { with: /\A[+\d]?[\d.\s()-]+\z/, message: "must be a valid phone number" }
 
