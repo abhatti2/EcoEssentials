@@ -2,13 +2,12 @@ class Customer < ApplicationRecord
   # Associations
   has_many :orders, dependent: :destroy
 
-  # Validations
-  # validates :first_name, :last_name, :address, :city, :postal_code, :phone, :province, presence: true
-  # validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, presence: true
-  # validates :email, uniqueness: { case_sensitive: false }, unless: :guest_user?
-  # validates :postal_code, format: { with: /\A[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d\z/, message: "must be a valid Canadian postal code" }
-  # validates :phone, format: { with: /\A[+\d]?[\d.\s()-]+\z/, message: "must be a valid phone number" }
-  validates :province, presence: true, on: :tax_calculation # Custom validation context for tax calculation
+   # Validations
+   validates :first_name, :last_name, :address, :city, :postal_code, :phone, :province, presence: true
+   validates :email, format: { with: URI::MailTo::EMAIL_REGEXP }, presence: true
+   validates :postal_code, format: { with: /\A[A-Za-z]\d[A-Za-z][ ]?\d[A-Za-z]\d\z/, message: "must be a valid Canadian postal code" }
+   validates :phone, format: { with: /\A[+\d]?[\d.\s()-]+\z/, message: "must be a valid phone number" }
+   validates :province, presence: true, on: :tax_calculation # Custom validation context for tax calculation
 
   # Helper method for full name
   def full_name

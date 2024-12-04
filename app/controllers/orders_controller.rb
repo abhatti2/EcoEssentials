@@ -40,4 +40,3 @@ class OrdersController < ApplicationController
     @total = @subtotal + @pst + @gst + @hst
   end
 end
-# end of file
