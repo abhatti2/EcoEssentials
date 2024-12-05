@@ -70,10 +70,9 @@ gem "sass-rails", ">= 6" # For SCSS preprocessor
 gem "faker"
 gem "activeadmin"
 gem "nokogiri"
-gem 'pg', '~> 1.2'
 
 
 group :development, :test do
-  gem 'rubocop', '~> 1.0', require: false
+  gem 'rubocop', require: false
   gem 'rubocop-rails', require: false
 end
