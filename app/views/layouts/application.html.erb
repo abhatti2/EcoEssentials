@@ -26,13 +26,6 @@
       </div>
     <% end %>
 
-    <% if session[:flash_message] %>
-      <div class="alert alert-info alert-dismissible fade show" role="alert">
-        <%= session.delete(:flash_message) %>
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-      </div>
-    <% end %>
-
     <%# Bootstrap Navbar for Navigation %>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <div class="container">
