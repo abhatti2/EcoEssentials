@@ -13,6 +13,7 @@ class CartsController < ApplicationController
 
     if valid_product_and_quantity?(product_id, quantity)
       session[:cart][product_id] = (session[:cart][product_id] || 0) + quantity
+      session[:flash_message] = "You added #{quantity} #{Product.find(product_id).name}(s) to your cart."
       redirect_to cart_path, notice: "Product successfully added to cart."
     else
       redirect_to products_path, alert: "Invalid product or quantity."
@@ -25,6 +26,7 @@ class CartsController < ApplicationController
 
     if valid_product_and_quantity?(product_id, quantity)
       session[:cart][product_id] = quantity
+      session[:flash_message] = "The quantity of #{Product.find(product_id).name} has been updated to #{quantity}."
       redirect_to cart_path, notice: "Quantity updated successfully."
     else
       redirect_to cart_path, alert: "Invalid product or quantity."
@@ -35,6 +37,7 @@ class CartsController < ApplicationController
     product_id = params[:product_id]
 
     if session[:cart]&.delete(product_id)
+      session[:flash_message] = "#{Product.find(product_id).name} was removed from your cart."
       redirect_to cart_path, notice: "Product successfully removed from cart."
     else
       redirect_to cart_path, alert: "Product not found in the cart."
@@ -43,6 +46,7 @@ class CartsController < ApplicationController
 
   def clear
     session[:cart] = {}
+    session[:flash_message] = "Your cart has been cleared."
     redirect_to cart_path, notice: "Your cart has been cleared."
   end
 
@@ -57,6 +61,8 @@ class CartsController < ApplicationController
     @customer = user_signed_in? ? map_user_to_customer(current_user) : Customer.new
     @provinces = province_tax_rates.keys
     calculate_summary(@customer.province || @provinces.first)
+
+    session[:flash_message] = "Review your order before placing it."
   end
 
   def update_summary
@@ -67,6 +73,7 @@ class CartsController < ApplicationController
     if @customer.valid?(:tax_calculation) # Use custom validation context
       calculate_summary(@customer.province)
       flash.now[:notice] = "Order summary updated."
+      session[:flash_message] = "Tax details have been updated based on the selected province."
     else
       flash.now[:alert] = "Please correct the errors in the form."
     end
@@ -104,6 +111,7 @@ class CartsController < ApplicationController
       end
 
       session[:cart] = nil
+      session[:flash_message] = "Your order has been placed successfully. Order ID: #{@order.id}"
       redirect_to order_confirmation_path(@order.id), notice: "Checkout successful! Thank you for your purchase."
     else
       flash.now[:alert] = "Please correct the errors in the form."
