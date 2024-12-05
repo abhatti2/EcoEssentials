@@ -9,9 +9,7 @@ class ProductsController < ApplicationController
     @products = Product.includes(:category).search(params[:query])
 
     # Filter by category if `category_id` is provided
-    if params[:category_id].present?
-      @products = @products.where(category_id: params[:category_id])
-    end
+    @products = @products.where(category_id: params[:category_id]) if params[:category_id].present?
 
     # Paginate results
     @products = @products.page(params[:page]).per(10)

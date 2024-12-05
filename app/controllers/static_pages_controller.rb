@@ -5,9 +5,9 @@ class StaticPagesController < ApplicationController
   # Show action for public visibility of static pages
   def show
     @page = StaticPage.find_by(slug: params[:slug])
-    if @page.nil?
-      render plain: "Page not found", status: :not_found
-    end
+    return unless @page.nil?
+
+    render plain: "Page not found", status: :not_found
   end
 
   # Index action for listing all static pages (Admin only)

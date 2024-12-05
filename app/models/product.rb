@@ -9,7 +9,7 @@ class Product < ApplicationRecord
   validates :category, presence: true
 
   # Scope for searching products by query and filtering by category name
-  scope :search, ->(query) {
+  scope :search, lambda { |query|
     if query.present?
       joins(:category).where(
         "LOWER(products.name) LIKE :query OR LOWER(products.description) LIKE :query OR LOWER(categories.name) LIKE :query",
