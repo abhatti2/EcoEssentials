@@ -72,3 +72,4 @@ gem "activeadmin"
 gem "nokogiri"
 gem 'rubocop'
 gem 'rubocop-rails'
+gem 'pg', '~> 1.2'
